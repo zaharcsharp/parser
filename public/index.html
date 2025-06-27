@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Фильтр объявлений</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 500px;
+      margin: 30px auto;
+      background: #f4f4f4;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .link {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Настройка фильтра</h1>
+  <form action="/set" method="POST">
+    <label for="min">Минимальная цена:</label>
+    <input type="number" id="min" name="min" min="0" value="0">
+
+    <label for="max">Максимальная цена:</label>
+    <input type="number" id="max" name="max" min="0" value="999999">
+
+    <label for="date">Фильтр по дате:</label>
+    <select id="date" name="date">
+      <option value="сегодня">Сегодня</option>
+      <option value="вчера">Вчера</option>
+      <option value="">Все даты</option>
+    </select>
+
+    <label for="chat">Выберите чат:</label>
+    <select id="chat" name="chat">
+      <option disabled selected>Загрузка чатов...</option>
+    </select>
+
+    <button type="submit">💾 Сохранить</button>
+  </form>
+
+  <a href="/chats" class="link">🔁 Обновить список чатов вручную</a>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const select = document.getElementById('chat');
+      try {
+        const res = await fetch('/available-chats');
+        const chats = await res.json();
+
+        // Очистить существующие опции
+        select.innerHTML = '';
+
+        if (chats.length === 0) {
+          select.innerHTML = '<option disabled>Нет доступных чатов</option>';
+          return;
+        }
+
+        chats.forEach(chat => {
+          const opt = document.createElement('option');
+          opt.value = chat.id;
+          opt.textContent = chat.name;
+          select.appendChild(opt);
+        });
+      } catch (err) {
+        console.error('Ошибка загрузки чатов:', err);
+        select.innerHTML = '<option disabled>Ошибка загрузки чатов</option>';
+      }
+    });
+  </script>
+</body>
+</html>
