@@ -245,5 +245,6 @@ app.get('/log', (req, res) => {
     `).join('');
     res.send(`<h2>Лог отправок</h2>${html}<br><a href="/">⬅ Назад</a>`);
 });
+const PORT = process.env.PORT || 3000;
 
-app.listen(3000, () => log('🌐 Интерфейс: http://localhost:3000'));
+app.listen(PORT, () => log(`🌐 Интерфейс: http://localhost:${PORT}`));
